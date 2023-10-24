@@ -10,7 +10,7 @@ pipeline {
 
     stage('Checkout') {
         steps {
-            git branch: 'main', credentialsId: 'Github', url: 'git@github.com:Fdoka/nginx-jenkins-ansible-terraform.git'
+            git branch: 'main', credentialsId: 'github_ssh_key', url: 'git@github.com:Fdoka/nginx-jenkins-ansible-terraform.git'
         }
     }
 
@@ -18,11 +18,11 @@ pipeline {
       steps {
         script {
           if (params.Action == "apply") {
-            sh 'terraform init terraform/static-site'
-            sh 'terraform apply -var "name=hello" -var "group=web" -var "region=us-east-1" -var "profile=devops" --auto-approve terraform/static-site'
+            sh 'terraform -chdir=terraform/static-site init'
+            sh 'terraform -chdir=terraform/static-site apply -var "name=hello" -var "group=web" -var "region=us-east-1" -var "profile=devops" --auto-approve'
           } 
           else {
-            sh 'terraform destroy -var "name=hello" -var "group=web" -var "region=us-east-1" -var "profile=devops" --auto-approve terraform/static-site'
+            sh 'terraform -chdir=terraform/static-site destroy -var "name=hello" -var "group=web" -var "region=us-east-1" -var "profile=devops" --auto-approve'
           }
         }
       }
